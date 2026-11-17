@@ -1,66 +1,74 @@
-import { Form, Link, Outlet } from "react-router";
-import { getContacts } from "../data";
-import type { Route } from "./+types/sidebar";
+import {
+  NavLink,
+  Outlet,
+  ScrollRestoration,
+  Scripts,
+  type MetaFunction,
+} from "react-router";
 
-export async function clientLoader() {
-  const contacts = await getContacts();
-  return { contacts };
+interface NavItem {
+  path: string;
+  label: string;
 }
 
-export default function SidebarLayout({
-  loaderData,
-}: Route.ComponentProps) {
-  const { contacts } = loaderData;
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Access local library",
+    },
+  ];
+};
 
-return (
+export default function SidebarLayout() {
+  const navItems: NavItem[] = [
+    { path: "/", label: "Home" },
+    { path: "/catalog", label: "Catalog" },
+    { path: "/about", label: "About" },
+  ];
+
+  return (
     <>
       <div id="sidebar">
-        <h1>
-          <Link to="about">React Router Contacts</Link>
-        </h1>
-        <div>
-          <Form id="search-form" role="search">
-            <input
-              aria-label="Search contacts"
-              id="q"
-              name="q"
-              placeholder="Search"
-              type="search"
-            />
-            <div aria-hidden hidden={true} id="search-spinner" />
-          </Form>
-          <Form method="post">
-            <button type="submit">New</button>
-          </Form>
+        <div className="container-md">
+          <div className="row">
+            <div className="col-3">
+              <h1>Local Library</h1>
+              <div className="card">
+                <div className="card-body">
+                  <nav>
+                    <ul className="list-unstyled">
+                      {navItems.map((item) => (
+                        <li key={item.path}>
+                          <NavLink
+                            to={item.path}
+                            className={({ isActive, isPending }) =>
+                              [
+                                "nav-link",
+                                isActive && "active",
+                                isPending && "pending",
+                              ]
+                                .filter(Boolean)
+                                .join(" ")
+                            }
+                          >
+                            {item.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <ScrollRestoration />
+              <Scripts />
+            </div>
+          </div>
         </div>
-        <nav>
-           {contacts.length ? (
-            <ul>
-              {contacts.map((contact) => (
-                <li key={contact.id}>
-                  <Link to={`contacts/${contact.id}`}>
-                    {contact.first || contact.last ? (
-                      <>
-                        {contact.first} {contact.last}
-                      </>
-                    ) : (
-                      <i>No Name</i>
-                    )}
-                    {contact.favorite ? (
-                      <span>★</span>
-                    ) : null}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>
-              <i>No contacts</i>
-            </p>
-          )}
-        </nav>
       </div>
-            <div id="detail">
+      <div id="detail">
         <Outlet />
       </div>
     </>
