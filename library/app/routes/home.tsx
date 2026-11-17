@@ -1,7 +1,18 @@
+import { type MetaFunction } from "react-router";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Home page - Browse your local library",
+    },
+  ];
+};
+
 export default function Home() {
   return (
     <p id="index-page">
-      This is a demo for React Router.
+      This is a demo local library project for React Router.
       <br />
       Check out{" "}
       <a href="https://reactrouter.com">
